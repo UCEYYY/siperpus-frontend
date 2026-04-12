@@ -1,0 +1,31 @@
+/* src/assets/main.css */
+/* Global styles — diimport di main.js */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: #F8FAFC;
+  color: #1E293B;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Utility: smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Utility: focus ring yang konsisten */
+:focus-visible {
+  outline: 2px solid #2563EB;
+  outline-offset: 2px;
+}
