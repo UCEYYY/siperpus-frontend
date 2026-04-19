@@ -7,7 +7,8 @@
       <div class="nav-links">
         <RouterLink to="/" active-class="aktif" exact>Beranda</RouterLink>
         <RouterLink to="/katalog" active-class="aktif">Katalog</RouterLink>
-        <!-- Link lain akan ditambahkan di Bab 4 -->
+        <RouterLink to="/buku/tambah" active-class="aktif">+ Tambah Buku</RouterLink>
+        <!-- Link lain ditambahkan di Bab 4 (Login, Dashboard, dll.) -->
       </div>
     </nav>
     <main>
@@ -24,6 +25,7 @@ body {
   background: #F8FAFC;
   color: #1E293B;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Navbar sementara — akan diganti komponen shadcn di Bab 3 */
@@ -40,25 +42,20 @@ body {
   top: 0;
   z-index: 100;
 }
-
 .brand {
   font-size: 1.2rem;
   font-weight: 800;
   color: #1A3C5E;
   text-decoration: none;
 }
-
-.nav-links {
-  display: flex;
-  gap: 8px;
-}
-
+.nav-links { display: flex; gap: 8px; }
 .nav-links a {
   padding: 6px 14px;
   border-radius: 6px;
   text-decoration: none;
   color: #475569;
   font-weight: 500;
+  font-size: .95rem;
   transition: .2s;
 }
 

@@ -109,6 +109,9 @@ import {
   onMounted,
   onBeforeUnmount
 } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // STATE
 const stat = reactive({
@@ -206,6 +209,11 @@ function kurangiPeminjaman() {
 }
 
 function showInfo(fitur) {
+  if (fitur === 'katalog') {
+    router.push({ name: 'katalog' })
+    return
+  }
+
   const pesan = {
     katalog: '📚 Katalog buku hadir di Bab 2 (direktif & filter)!',
     login: '🔐 Autentikasi hadir di Bab 5 (JWT + Express.js)!'
