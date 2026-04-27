@@ -1,502 +1,125 @@
-<!-- src/views/HomeView.vue -->
 <template>
-  <div class="home">
-
+  <div class="min-h-screen">
     <!-- HERO SECTION -->
-    <section class="hero">
-      <h1>📚 SiPerpus</h1>
-      <p class="tagline">Sistem Informasi Perpustakaan Digital</p>
-      <p class="desc">
-        Kelola koleksi buku, anggota, dan peminjaman
-        dalam satu platform modern berbasis Vue.js 3.
-      </p>
-      <div class="hero-btns">
-        <button class="btn-primary" @click="showInfo('katalog')">
-          Jelajahi Katalog
-        </button>
-        <button class="btn-outline" @click="showInfo('login')">
-          Masuk Akun
-        </button>
+    <section class="bg-gradient-to-br from-primary/5 via-background to-secondary/20">
+      <div class="container mx-auto px-4 py-20 text-center">
+        <Badge variant="outline" class="mb-4">
+          <Sparkles class="mr-1 h-3 w-3" /> Sistem Perpustakaan Digital
+        </Badge>
+        <h1 class="text-5xl font-extrabold tracking-tight text-foreground mb-4">
+          Selamat Datang di <span class="text-primary">SiPerpus</span>
+        </h1>
+        <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+          Kelola koleksi buku, anggota, dan peminjaman dalam satu platform modern berbasis Vue 3 dan Express.js.
+        </p>
+        <div class="flex gap-3 justify-center flex-wrap">
+          <Button size="lg" as-child>
+            <RouterLink to="/katalog">
+              <BookOpen class="mr-2 h-5 w-5" /> Jelajahi Katalog
+            </RouterLink>
+          </Button>
+          <Button size="lg" variant="outline" as-child>
+            <RouterLink to="/login"><LogIn class="mr-2 h-5 w-5" /> Masuk Akun</RouterLink>
+          </Button>
+        </div>
       </div>
     </section>
 
     <!-- STATISTIK SECTION -->
-    <section class="stat-section">
-      <h2>Statistik Koleksi</h2>
-      <p class="sub">Data perpustakaan saat ini</p>
+    <section class="container mx-auto px-4 py-16">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold">Statistik Perpustakaan</h2>
+        <p class="text-muted-foreground mt-2">Data koleksi real-time</p>
+      </div>
 
-      <div class="stat-grid">
-        <div
-          v-for="kartu in kartuStat"
-          :key="kartu.id"
-          class="kartu"
-          :style="{ borderTopColor: kartu.warna }"
-        >
-          <span class="k-ikon">{{ kartu.ikon }}</span>
-          <span class="k-nilai" :style="{ color: kartu.warna }">
-            {{ kartu.nilai }}
-          </span>
-          <span class="k-label">{{ kartu.label }}</span>
-          <span v-if="kartu.sub" class="k-sub">{{ kartu.sub }}</span>
-        </div>
+      <!-- Grid kartu statistik menggunakan Card shadcn -->
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card v-for="item in kartuStat" :key="item.id" class="relative overflow-hidden">
+          <CardHeader class="pb-2">
+            <CardDescription>{{ item.label }}</CardDescription>
+            <CardTitle class="text-3xl font-extrabold">{{ item.nilai }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p v-if="item.sub" class="text-xs text-muted-foreground">{{ item.sub }}</p>
+          </CardContent>
+          <!-- Ikon dekoratif di pojok kanan -->
+          <div class="absolute right-4 top-4 opacity-10 text-5xl">{{ item.ikon }}</div>
+        </Card>
       </div>
     </section>
 
-    <!-- DEMO REAKTIVITAS -->
-    <section class="demo">
-      <h2>Demo Reaktivitas Vue.js 3</h2>
-      <p class="sub">
-        Ubah nilai di bawah dan perhatikan statistik di atas berubah otomatis!
-      </p>
-
-      <div class="demo-row">
-        <div class="ctrl-group">
-          <label>Total Buku</label>
-          <div class="ctrl">
-            <button
-              @click="stat.totalBuku--"
-              :disabled="stat.totalBuku <= 0"
-            >-</button>
-            <span>{{ stat.totalBuku }}</span>
-            <button @click="stat.totalBuku++">+</button>
+    <!-- DEMO REAKTIVITAS dengan shadcn -->
+    <section class="container mx-auto px-4 pb-16">
+      <Card class="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Demo Reaktivitas Vue.js 3</CardTitle>
+          <CardDescription>Gunakan counter di bawah dan perhatikan statistik berubah otomatis</CardDescription>
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <div class="flex gap-8 justify-center">
+            <div class="text-center">
+              <p class="text-sm text-muted-foreground mb-2">Total Buku</p>
+              <div class="flex items-center gap-3">
+                <Button variant="outline" size="icon" @click="stat.totalBuku--" :disabled="stat.totalBuku <= 0">−</Button>
+                <span class="text-2xl font-bold w-16 text-center">{{ stat.totalBuku }}</span>
+                <Button variant="outline" size="icon" @click="stat.totalBuku++">+</Button>
+              </div>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-muted-foreground mb-2">Peminjaman Aktif</p>
+              <div class="flex items-center gap-3">
+                <Button variant="outline" size="icon" @click="kurangi" :disabled="stat.peminjamanAktif <= 0">−</Button>
+                <span class="text-2xl font-bold w-16 text-center">{{ stat.peminjamanAktif }}</span>
+                <Button variant="outline" size="icon" @click="tambah">+</Button>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="ctrl-group">
-          <label>Peminjaman Aktif</label>
-          <div class="ctrl">
-            <button
-              @click="kurangiPeminjaman"
-              :disabled="stat.peminjamanAktif <= 0"
-            >-</button>
-            <span>{{ stat.peminjamanAktif }}</span>
-            <button @click="tambahPeminjaman">+</button>
+          <!-- Progress bar Tailwind -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-sm text-muted-foreground">
+              <span>Buku Tersedia</span>
+              <span>{{ bukuTersedia }} ({{ persenTersedia }})</span>
+            </div>
+            <div class="h-2 w-full bg-secondary rounded-full overflow-hidden">
+              <div class="h-full bg-primary rounded-full transition-all duration-500" :style="{ width: persenTersedia }" />
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div class="computed-info">
-        <p>
-          Buku Tersedia:
-          <strong>{{ bukuTersedia }}</strong>
-          &nbsp;({{ persenTersedia }} dari koleksi)
-        </p>
-
-        <div class="pbar">
-          <div
-            class="pbar-fill"
-            :style="{ width: persenTersedia }"
-          ></div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </section>
-
-    <!-- NOTIFIKASI TOAST -->
-    <div v-if="toast" class="toast" :class="toast.type">
-      <span>{{ toast.msg }}</span>
-      <button @click="toast = null">x</button>
-    </div>
-
   </div>
 </template>
 
 <script setup>
-import {
-  ref,
-  reactive,
-  computed,
-  watch,
-  onMounted,
-  onBeforeUnmount
-} from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, computed } from 'vue'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { BookOpen, LogIn, Sparkles } from 'lucide-vue-next'
 
-const router = useRouter()
-
-// STATE
 const stat = reactive({
   totalBuku: 1247,
   totalAnggota: 328,
   peminjamanAktif: 89
 })
 
-const toast = ref(null)
-let toastTimer = null
-
-// COMPUTED
-const bukuTersedia = computed(() => {
-  return stat.totalBuku - stat.peminjamanAktif
-})
-
+const bukuTersedia = computed(() => stat.totalBuku - stat.peminjamanAktif)
 const persenTersedia = computed(() => {
-  if (stat.totalBuku === 0) return '0%'
-  return (
-    (bukuTersedia.value / stat.totalBuku) * 100
-  ).toFixed(1) + '%'
+  if (!stat.totalBuku) return '0%'
+  return ((bukuTersedia.value / stat.totalBuku) * 100).toFixed(1) + '%'
 })
 
 const kartuStat = computed(() => [
-  {
-    id: 'buku',
-    ikon: '📚',
-    label: 'Total Buku',
-    nilai: stat.totalBuku,
-    warna: '#2563EB',
-    sub: null
-  },
-  {
-    id: 'anggota',
-    ikon: '👥',
-    label: 'Anggota Aktif',
-    nilai: stat.totalAnggota,
-    warna: '#059669',
-    sub: null
-  },
-  {
-    id: 'pinjam',
-    ikon: '📤',
-    label: 'Dipinjam',
-    nilai: stat.peminjamanAktif,
-    warna: '#D97706',
-    sub: null
-  },
-  {
-    id: 'tersedia',
-    ikon: '✅',
-    label: 'Buku Tersedia',
-    nilai: bukuTersedia.value,
-    warna: '#7C3AED',
-    sub: persenTersedia.value
-  }
+  { id: 'buku', ikon: '📚', label: 'Total Buku', nilai: stat.totalBuku, sub: null },
+  { id: 'anggota', ikon: '👥', label: 'Anggota Aktif', nilai: stat.totalAnggota, sub: null },
+  { id: 'pinjam', ikon: '📖', label: 'Dipinjam', nilai: stat.peminjamanAktif, sub: null },
+  { id: 'tersedia', ikon: '✅', label: 'Buku Tersedia', nilai: bukuTersedia.value, sub: persenTersedia.value }
 ])
 
-// WATCH
-watch(
-  () => stat.peminjamanAktif,
-  (baru) => {
-    const persen = (baru / stat.totalBuku) * 100
-    if (persen > 80) {
-      showToast(
-        'warning',
-        `⚠️ ${persen.toFixed(0)}% buku sedang dipinjam!`
-      )
-    }
-  }
-)
-
-// LIFECYCLE
-onMounted(() => {
-  console.log('HomeView mounted — data siap ditampilkan')
-})
-
-onBeforeUnmount(() => {
-  if (toastTimer) clearTimeout(toastTimer)
-})
-
-// METHODS
-function tambahPeminjaman() {
-  if (stat.peminjamanAktif >= stat.totalBuku) {
-    showToast('error', '❌ Semua buku sudah dipinjam!')
-    return
-  }
-  stat.peminjamanAktif++
+function tambah() {
+  if (stat.peminjamanAktif < stat.totalBuku) stat.peminjamanAktif++
 }
-
-function kurangiPeminjaman() {
-  if (stat.peminjamanAktif > 0) {
-    stat.peminjamanAktif--
-  }
-}
-
-function showInfo(fitur) {
-  if (fitur === 'katalog') {
-    router.push({ name: 'katalog' })
-    return
-  }
-
-  const pesan = {
-    katalog: '📚 Katalog buku hadir di Bab 2 (direktif & filter)!',
-    login: '🔐 Autentikasi hadir di Bab 5 (JWT + Express.js)!'
-  }
-  showToast('info', pesan[fitur] || 'Fitur akan segera hadir!')
-}
-
-function showToast(type, msg) {
-  if (toastTimer) clearTimeout(toastTimer)
-
-  toast.value = { type, msg }
-
-  toastTimer = setTimeout(() => {
-    toast.value = null
-  }, 4000)
+function kurangi() {
+  if (stat.peminjamanAktif > 0) stat.peminjamanAktif--
 }
 </script>
-
-<style scoped>
-.home {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px 80px;
-}
-
-/* Hero */
-.hero {
-  text-align: center;
-  padding: 80px 0 60px;
-}
-
-.hero h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #1A3C5E;
-}
-
-.tagline {
-  font-size: 1.3rem;
-  color: #2563EB;
-  font-weight: 600;
-  margin: 8px 0;
-}
-
-.desc {
-  color: #64748B;
-  max-width: 500px;
-  margin: 12px auto 28px;
-}
-
-.hero-btns {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.btn-primary {
-  background: #2563EB;
-  color: #fff;
-  border: none;
-  padding: 12px 28px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: .2s;
-}
-
-.btn-primary:hover {
-  background: #1D4ED8;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #2563EB;
-  border: 2px solid #2563EB;
-  padding: 12px 28px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: .2s;
-}
-
-.btn-outline:hover {
-  background: #EFF6FF;
-}
-
-/* Statistik */
-.stat-section,
-.demo {
-  margin-top: 60px;
-}
-
-.stat-section h2,
-.demo h2 {
-  font-size: 1.8rem;
-  color: #1A3C5E;
-  text-align: center;
-}
-
-.sub {
-  text-align: center;
-  color: #64748B;
-  margin: 8px 0 28px;
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.kartu {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px 20px;
-  border-top: 4px solid;
-  box-shadow: 0 2px 12px rgba(0,0,0,.07);
-  text-align: center;
-  transition: transform .2s;
-}
-
-.kartu:hover {
-  transform: translateY(-3px);
-}
-
-.k-ikon {
-  display: block;
-  font-size: 2rem;
-}
-
-.k-nilai {
-  display: block;
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin: 8px 0;
-}
-
-.k-label {
-  font-size: .85rem;
-  color: #64748B;
-  font-weight: 500;
-}
-
-.k-sub {
-  display: block;
-  font-size: .75rem;
-  color: #059669;
-  background: #F0FDF4;
-  padding: 2px 8px;
-  border-radius: 12px;
-  margin-top: 6px;
-}
-
-/* Demo */
-.demo {
-  background: #fff;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
-}
-
-.demo-row {
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 24px 0;
-}
-
-.ctrl-group label {
-  display: block;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: 8px;
-}
-
-.ctrl {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.ctrl button {
-  width: 36px;
-  height: 36px;
-  border: 2px solid #2563EB;
-  background: transparent;
-  color: #2563EB;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: .2s;
-}
-
-.ctrl button:hover:not(:disabled) {
-  background: #2563EB;
-  color: #fff;
-}
-
-.ctrl button:disabled {
-  opacity: .3;
-  cursor: not-allowed;
-}
-
-.ctrl span {
-  font-size: 1.5rem;
-  font-weight: 700;
-  min-width: 60px;
-  text-align: center;
-}
-
-.computed-info {
-  text-align: center;
-}
-
-.pbar {
-  height: 12px;
-  background: #E2E8F0;
-  border-radius: 6px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.pbar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #2563EB, #059669);
-  border-radius: 6px;
-  transition: width .5s;
-}
-
-/* Toast */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  max-width: 380px;
-  padding: 14px 18px;
-  border-radius: 10px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(0,0,0,.15);
-  z-index: 999;
-  animation: slideIn .3s ease;
-}
-
-.toast button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  opacity: .6;
-}
-
-.toast.info {
-  background: #EFF6FF;
-  border-left: 4px solid #2563EB;
-  color: #1E3A5F;
-}
-
-.toast.warning {
-  background: #FFFBEB;
-  border-left: 4px solid #D97706;
-  color: #7C4A00;
-}
-
-.toast.error {
-  background: #FEF2F2;
-  border-left: 4px solid #DC2626;
-  color: #7F1D1D;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(110%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-</style>
